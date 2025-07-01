@@ -6,7 +6,7 @@
   <h2>🚀 Your Complete Bangla Language Universe</h2>
   <p><em>AI-Powered Translation • Intelligent Chat • Content Creation • Language Learning</em></p>
   
-  [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_BanglaVerse-16A34A?style=for-the-badge&logo=vercel)](https://banglish-to-bangla-conversion-app-rh41.vercel.app/)
+  [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_BanglaVerse-16A34A?style=for-the-badge&logo=vercel)](https://banglaverse.vercel.app/)
   [![Watch Demo](https://img.shields.io/badge/▶️_Video_Demo-YouTube-DC2626?style=for-the-badge&logo=youtube)](https://youtu.be/enjSW7mZueA)
   [![GitHub Stars](https://img.shields.io/github/stars/Sabbir-Asif/Banglish_to_Bangla_Conversion_App?style=for-the-badge&logo=github&color=F59E0B)](https://github.com/Sabbir-Asif/Banglish_to_Bangla_Conversion_App)
   
