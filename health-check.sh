@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 # Default URLs (update these with your actual deployment URLs)
 FRONTEND_URL="${1:-https://banglaverse.vercel.app}"
-BACKEND_URL="${2:-https://banglaverse-backend.vercel.app}"
+BACKEND_URL="${2:-https://banglaverse-backend-api.vercel.app}"
 
 echo -e "${BLUE}Frontend URL: ${FRONTEND_URL}${NC}"
 echo -e "${BLUE}Backend URL: ${BACKEND_URL}${NC}"
