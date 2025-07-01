@@ -22,6 +22,18 @@
 
 ---
 
+> 🚨 **Having 404 deployment issues?** 
+> 
+> **Quick Fix:** Use **Netlify** instead of Vercel! 
+> 
+> ```bash
+> cd Frontend && ./netlify-deploy.sh
+> ```
+> 
+> Or check our [**🚀 DEPLOYMENT_GUIDE.md**](DEPLOYMENT_GUIDE.md) for multiple hosting options.
+
+---
+
 ## 📖 Overview
 
 **BanglaVerse** is a revolutionary AI-powered platform that transforms how people interact with the Bengali language. It seamlessly bridges the gap between Banglish (Bengali written in English script) and authentic Bengali, offering a comprehensive suite of tools for translation, conversation, content creation, and language learning.
@@ -263,24 +275,95 @@ BanglaVerse/
 
 ## 🌐 Deployment
 
-### **🚀 Production Deployment (Vercel)**
+### **🎯 Recommended: Alternative Hosting (If Vercel 404 Issues)**
 
-1. **Frontend Deployment**
+**If you're experiencing 404 errors on Vercel**, try these more reliable platforms for React SPAs:
+
+#### 🌐 **Netlify (BEST CHOICE - Most Reliable)**
+```bash
+# Quick deployment script
+cd Frontend
+./netlify-deploy.sh
+
+# Manual deployment:
+# 1. Build: npm run build
+# 2. Go to: https://app.netlify.com/drop
+# 3. Drag and drop your 'dist' folder
+# 4. Your app is live instantly!
+```
+
+#### 🔥 **Firebase Hosting**
+```bash
+cd Frontend
+npm install -g firebase-tools
+firebase login
+firebase init hosting
+npm run build
+firebase deploy
+```
+
+#### ⚡ **Surge.sh (Super Fast)**
+```bash
+cd Frontend
+npm install -g surge
+npm run build
+surge dist banglaverse.surge.sh
+```
+
+#### 🎨 **Render Static Sites**
+1. Go to https://render.com
+2. Connect your GitHub repository
+3. Set build command: `npm run build`
+4. Set publish directory: `dist`
+5. Deploy!
+
+### **📁 Multi-Platform Deployment Script**
+```bash
+cd Frontend
+./multi-deploy.sh
+# Interactive script to choose your preferred platform
+```
+
+### **🚀 Vercel Deployment (If you still want to try)**
+
+1. **Clean deployment attempt:**
    ```bash
    cd Frontend
+   rm -rf .vercel dist node_modules/.cache
+   npm install
    npm run build
    vercel --prod
    ```
 
-2. **Backend Deployment**
+2. **Using the deployment script:**
    ```bash
-   cd Backend
-   vercel --prod
+   ./deploy.sh
    ```
 
-3. **Database Hosting**
-   - Use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for production
-   - Update connection string in backend `.env`
+### **⚡ Backend Deployment Options**
+
+Choose from these reliable backend hosting platforms:
+
+#### **Railway (Recommended)**
+```bash
+cd Backend
+npm install -g @railway/cli
+railway login
+railway link
+railway up
+```
+
+#### **Render**
+1. Connect GitHub repository
+2. Set build command: `npm install`
+3. Set start command: `npm start`
+4. Add environment variables
+
+#### **Vercel (Node.js APIs)**
+```bash
+cd Backend
+vercel --prod
+```
 
 ### **🐳 Docker Production**
 
@@ -291,11 +374,12 @@ docker-compose -f docker-compose.prod.yml up --build
 
 ### **🔧 Environment Variables for Production**
 
-Ensure all production environment variables are properly configured:
+**Important:** Set these in your hosting platform's dashboard:
+- `VITE_API_URL`: Your backend API URL
+- `VITE_FIREBASE_API_KEY`: Firebase configuration
 - Database connection strings
-- API keys
+- API keys (Google Gemini, etc.)
 - CORS origins
-- Security tokens
 
 ---
 
@@ -500,5 +584,270 @@ Before deploying, ensure:
 - ✅ CORS is configured for production URLs
 - ✅ Build runs successfully locally
 - ✅ All routes work in preview mode
+
+---
+
+## 🌐 **Multiple Hosting Options for BanglaVerse**
+
+### **🚀 Option 1: Vercel (Simplified Fix)**
+
+**Step-by-Step Fix:**
+
+1. **Delete existing deployment**:
+   ```bash
+   vercel rm your-project-name
+   ```
+
+2. **Use simplified vercel.json** (already updated):
+   ```json
+   {
+     "rewrites": [
+       {
+         "source": "/(.*)",
+         "destination": "/index.html"
+       }
+     ]
+   }
+   ```
+
+3. **Deploy with specific settings**:
+   ```bash
+   cd Frontend
+   rm -rf dist .vercel
+   npm run build
+   vercel --prod
+   ```
+
+4. **Manual Vercel Dashboard Setup**:
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "Add New Project"
+   - Import from GitHub
+   - **Framework Preset**: `Other`
+   - **Root Directory**: `Frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+
+---
+
+### **🔥 Option 2: Netlify (Highly Recommended Alternative)**
+
+Netlify often handles SPAs better than Vercel. Here's how to deploy:
+
+1. **Create `_redirects` file**:
+   ```bash
+   echo "/*    /index.html   200" > Frontend/public/_redirects
+   ```
+
+2. **Build and deploy**:
+   ```bash
+   cd Frontend
+   npm run build
+   ```
+
+3. **Deploy to Netlify**:
+   - Go to [Netlify](https://app.netlify.com/)
+   - Drag and drop your `dist` folder
+   - Or connect GitHub repository
+   - **Build command**: `npm run build`
+   - **Publish directory**: `dist`
+
+4. **Environment Variables** (in Netlify Dashboard):
+   ```
+   VITE_API_URL=https://your-backend.vercel.app
+   VITE_FIREBASE_API_KEY=your_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_domain
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   VITE_GOOGLE_GEMINI_API_KEY=your_gemini_key
+   ```
+
+---
+
+### **⚡ Option 3: Firebase Hosting (Google's Platform)**
+
+Perfect for Firebase-integrated apps:
+
+1. **Install Firebase CLI**:
+   ```bash
+   npm install -g firebase-tools
+   ```
+
+2. **Initialize Firebase**:
+   ```bash
+   cd Frontend
+   firebase login
+   firebase init hosting
+   ```
+
+3. **Configure `firebase.json`**:
+   ```json
+   {
+     "hosting": {
+       "public": "dist",
+       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+       "rewrites": [
+         {
+           "source": "**",
+           "destination": "/index.html"
+         }
+       ]
+     }
+   }
+   ```
+
+4. **Deploy**:
+   ```bash
+   npm run build
+   firebase deploy
+   ```
+
+---
+
+### **🌊 Option 4: Surge.sh (Simple & Fast)**
+
+Great for quick deployments:
+
+1. **Install Surge**:
+   ```bash
+   npm install -g surge
+   ```
+
+2. **Build and deploy**:
+   ```bash
+   cd Frontend
+   npm run build
+   cd dist
+   cp index.html 200.html  # For SPA routing
+   surge --domain banglaverse.surge.sh
+   ```
+
+---
+
+### **📦 Option 5: GitHub Pages**
+
+Free hosting with GitHub:
+
+1. **Install gh-pages**:
+   ```bash
+   cd Frontend
+   npm install --save-dev gh-pages
+   ```
+
+2. **Update package.json**:
+   ```json
+   {
+     "homepage": "https://yourusername.github.io/your-repo-name",
+     "scripts": {
+       "predeploy": "npm run build",
+       "deploy": "gh-pages -d dist"
+     }
+   }
+   ```
+
+3. **Deploy**:
+   ```bash
+   npm run deploy
+   ```
+
+---
+
+### **☁️ Option 6: Railway (Backend + Frontend)**
+
+Perfect for full-stack deployment:
+
+1. **Connect to Railway**:
+   - Go to [Railway](https://railway.app/)
+   - Connect GitHub repository
+   - Create new project
+
+2. **Configure Frontend**:
+   - **Build Command**: `cd Frontend && npm install && npm run build`
+   - **Start Command**: `cd Frontend && npm run preview`
+
+3. **Configure Backend**:
+   - **Build Command**: `cd Backend && npm install`
+   - **Start Command**: `cd Backend && npm start`
+
+---
+
+### **🚀 Option 7: Render (Great Alternative)**
+
+1. **Create account at [Render](https://render.com/)**
+
+2. **Deploy Frontend**:
+   - Connect GitHub repository
+   - **Type**: Static Site
+   - **Build Command**: `cd Frontend && npm install && npm run build`
+   - **Publish Directory**: `Frontend/dist`
+
+3. **Deploy Backend**:
+   - **Type**: Web Service
+   - **Build Command**: `cd Backend && npm install`
+   - **Start Command**: `cd Backend && npm start`
+
+---
+
+### **🐳 Option 8: DigitalOcean App Platform**
+
+1. **Create account at [DigitalOcean](https://www.digitalocean.com/)**
+
+2. **App Platform Configuration**:
+   ```yaml
+   name: banglaverse
+   services:
+   - name: frontend
+     source_dir: Frontend
+     github:
+       repo: your-username/your-repo
+       branch: main
+     build_command: npm run build
+     output_dir: dist
+     static_sites:
+     - name: banglaverse-frontend
+   
+   - name: backend
+     source_dir: Backend
+     github:
+       repo: your-username/your-repo
+       branch: main
+     build_command: npm install
+     run_command: npm start
+   ```
+
+---
+
+### **🎯 Quick Deployment Script for Multiple Platforms**
+
+Let me create a deployment script that tries multiple platforms:
+
+---
+
+### **📊 Hosting Comparison**
+
+| **Platform** | **Ease** | **Speed** | **Free Tier** | **SPA Support** | **Custom Domain** |
+|-------------|----------|-----------|---------------|-----------------|-------------------|
+| **Netlify** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ✅ 100GB | ✅ Excellent | ✅ Free |
+| **Vercel** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ✅ 100GB | ✅ Good | ✅ Free |
+| **Firebase** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ✅ 10GB | ✅ Excellent | ✅ Free |
+| **Railway** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ✅ 500h/month | ✅ Good | ✅ Free |
+| **Render** | ⭐⭐⭐⭐ | ⭐⭐⭐ | ✅ 750h/month | ✅ Good | ✅ Free |
+| **Surge** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ✅ Unlimited | ✅ Basic | ✅ Free |
+
+---
+
+### **🎯 My Recommendations**
+
+**For Immediate Success:**
+1. **Netlify** - Most reliable for React SPAs
+2. **Firebase Hosting** - Perfect for Firebase apps
+3. **Surge.sh** - Quickest deployment
+
+**For Full-Stack:**
+1. **Railway** - Frontend + Backend together
+2. **Render** - Good free tier
+3. **DigitalOcean** - Professional grade
 
 ---
