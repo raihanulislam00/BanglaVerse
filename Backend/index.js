@@ -19,11 +19,14 @@ const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 
-// Socket.IO setup
+// Socket.IO setup with environment-based CORS
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:8080", // Update this with your frontend URL
-    methods: ["GET", "POST"]
+    origin: process.env.CORS_ORIGIN || process.env.NODE_ENV === 'production' 
+      ? ["https://banglaverse.vercel.app", "https://banglaverse.netlify.app"] 
+      : "http://localhost:8080",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -58,10 +61,24 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use(express.json());
-app.use(cors());
-app.use(morgan('combined'));
-app.use(helmet());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || process.env.NODE_ENV === 'production' 
+    ? ["https://banglaverse.vercel.app", "https://banglaverse.netlify.app"] 
+    : ["http://localhost:8080", "http://localhost:3000"],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use(helmet({
+  crossOriginEmbedderPolicy: false,
+}));
 
 mongoConnection();
 
@@ -70,14 +87,16 @@ const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'Banglish to Bangla conversion API',
+      title: 'BanglaVerse API',
       version: '1.0.0',
-      description: 'API for managing users and documents',
+      description: 'AI-Powered Bangla Language Platform API',
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server',
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://banglaverse-backend.vercel.app'
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
       },
     ],
     components: {
@@ -105,7 +124,26 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
-app.get('/', (req, res) => res.send('Server is running'));
+app.get('/', (req, res) => {
+  res.json({
+    message: 'BanglaVerse API Server is running',
+    version: '1.0.0',
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    docs: '/api-docs'
+  });
+});
+
+// Health check endpoint for monitoring
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    version: process.version
+  });
+});
 
 // Routes
 app.use('/api/users', users);

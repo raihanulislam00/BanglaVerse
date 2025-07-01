@@ -30,7 +30,12 @@
 > cd Frontend && ./netlify-deploy.sh
 > ```
 > 
-> Or check our [**🚀 DEPLOYMENT_GUIDE.md**](DEPLOYMENT_GUIDE.md) for multiple hosting options.
+> **Or try our optimized Vercel deployment:**
+> ```bash
+> ./vercel-deploy.sh
+> ```
+> 
+> Check our [**🚀 DEPLOYMENT_GUIDE.md**](DEPLOYMENT_GUIDE.md) | [**⚡ VERCEL_CONFIG.md**](VERCEL_CONFIG.md) | [**🏃 QUICK_FIX.md**](QUICK_FIX.md)
 
 ---
 
