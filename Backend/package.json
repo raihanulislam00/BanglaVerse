@@ -1,0 +1,43 @@
+{
+  "name": "banglaverse-backend",
+  "version": "1.0.0",
+  "description": "BanglaVerse Backend API - AI-Powered Bangla Language Platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "vercel-build",
+    "vercel-build": "npm install",
+    "test": "jest"
+  },
+  "keywords": [
+    "backend",
+    "api",
+    "express",
+    "socket.io",
+    "mongodb",
+    "bangla",
+    "bengali",
+    "translation",
+    "ai"
+  ],
+  "author": "BanglaVerse Team",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.9.3",
+    "morgan": "^1.10.0",
+    "openai": "^4.77.0",
+    "socket.io": "^4.8.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}
