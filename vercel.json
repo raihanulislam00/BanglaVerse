@@ -1,31 +1,16 @@
 {
   "version": 2,
-  "name": "banglaverse",
-  "builds": [
-    {
-      "src": "Frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "name": "banglaverse-frontend",
+  "buildCommand": "cd Frontend && npm install && npm run build",
+  "outputDirectory": "Frontend/dist",
+  "installCommand": "cd Frontend && npm install",
   "routes": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/Frontend/dist/assets/$1"
-    },
-    {
-      "src": "/logo.svg",
-      "dest": "/Frontend/dist/logo.svg"
-    },
-    {
-      "src": "/favicon.svg", 
-      "dest": "/Frontend/dist/favicon.svg"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/Frontend/dist/index.html"
+      "dest": "/index.html"
     }
   ]
 }
