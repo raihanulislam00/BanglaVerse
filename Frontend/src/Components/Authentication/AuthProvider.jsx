@@ -20,7 +20,7 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Safe API URL handling
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://banglaverse-backend.vercel.app' || 'http://localhost:3000';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://banglaverse-backend-api.vercel.app' || 'http://localhost:3000';
 
   const fetchUserData = async (email) => {
     try {
@@ -47,7 +47,7 @@ const AuthProvider = ({ children }) => {
       const imageUrl = result.user?.photoURL || 'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=';
       const newUser = { displayName, email, imageUrl };
 
-      const response = await fetch('http://localhost:3000/api/users', {
+      const response = await fetch(`${API_BASE_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newUser),

@@ -169,5 +169,7 @@ if (require.main === module) {
   });
 }
 
-// Export app and server for testing
-module.exports = { app, server };
+// Export app and server for testing and Vercel deployment
+module.exports = app; // Export app directly for Vercel
+module.exports.app = app;
+module.exports.server = server;
