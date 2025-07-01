@@ -145,6 +145,36 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Database connection test endpoint
+app.get('/db-test', async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const connectionState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    res.json({
+      database: {
+        status: states[connectionState] || 'unknown',
+        readyState: connectionState,
+        mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not Set',
+        dbEnv: process.env.DB ? 'Set' : 'Not Set'
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Database test failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Routes
 app.use('/api/users', users);
 app.use('/api/trainData', trainData);

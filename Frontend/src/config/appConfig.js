@@ -1,5 +1,5 @@
 // API Configuration with fallbacks for development and production
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://banglaverse-backend-api.vercel.app' || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://banglaverse-backend-api.vercel.app';
 
 // Google Gemini API Key with fallback
 const GOOGLE_GEMINI_API_KEY = import.meta.env.VITE_GOOGLE_GEMINI_API_KEY || 'AIzaSyCaVoN1ceAPZ7BsvfEp80xQpCzDxRobMxw';
@@ -11,7 +11,7 @@ const isDevelopment = import.meta.env.MODE === 'development';
 export const config = {
   api: {
     baseURL: API_BASE_URL,
-    timeout: 10000, // 10 seconds timeout
+    timeout: 15000, // 15 seconds timeout for better reliability
   },
   google: {
     geminiApiKey: GOOGLE_GEMINI_API_KEY,

@@ -131,28 +131,79 @@ export default function EnhancedTranslator() {
   };
 
   const translateWithBackend = async (query) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/translate`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://banglaverse-backend-api.vercel.app';
+      const fullUrl = `${apiUrl}/api/translate`;
+      
+      console.log('Translation API URL:', fullUrl);
+      console.log('Environment variables:', {
+        VITE_API_URL: import.meta.env.VITE_API_URL,
+        MODE: import.meta.env.MODE,
+        PROD: import.meta.env.PROD
+      });
+
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ text: query }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        console.error('Response details:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (parseError) {
+          console.warn('Could not parse error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      // Check if response has content
+      const responseText = await response.text();
+      if (!responseText || responseText.trim() === '') {
+        throw new Error('Empty response received from server');
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        console.error('Response text:', responseText);
+        throw new Error('Invalid JSON response from server');
+      }
       
       if (!data.success) {
         throw new Error(data.error || 'Translation failed');
       }
 
+      if (!data.bangla) {
+        throw new Error('No translation result received');
+      }
+
       return data.bangla;
     } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error.name === 'AbortError') {
+        throw new Error('Translation request timed out. Please try again.');
+      }
+      
       console.error("Error during translation:", error);
       throw error;
     }
@@ -237,19 +288,34 @@ export default function EnhancedTranslator() {
     } catch (error) {
       console.error("Primary translation error:", error);
       
-      // Check if it's a quota or API error
-      if (error.message.includes('quota') || error.message.includes('API key') || error.message.includes('limits')) {
+      // Provide more specific error messages
+      let errorMessage = "Translation failed";
+      
+      if (error.message.includes('Empty response')) {
+        errorMessage = "Server returned empty response. Please try again.";
+      } else if (error.message.includes('Invalid JSON')) {
+        errorMessage = "Server response format error. Please contact support if this persists.";
+      } else if (error.message.includes('Network error') || error.message.includes('fetch failed')) {
+        errorMessage = "Network connection error. Please check your internet connection and try again.";
+      } else if (error.message.includes('quota') || error.message.includes('API key') || error.message.includes('limits')) {
         // Use fallback translation
         try {
           const fallbackTranslation = translateWithFallback(query);
           setBangla(fallbackTranslation);
           setError("⚠️ Using offline translation mode due to API quota limits. For better accuracy, please try again later.");
+          return; // Exit early since we have a fallback result
         } catch (fallbackError) {
-          setError(`Translation failed: ${error.message}`);
+          errorMessage = "Translation service temporarily unavailable. Please try again later.";
         }
+      } else if (error.message.includes('500')) {
+        errorMessage = "Translation service error. Please try again in a moment.";
+      } else if (error.message.includes('404')) {
+        errorMessage = "Translation service not found. Please contact support.";
       } else {
-        setError(`Translation failed: ${error.message}`);
+        errorMessage = `Translation failed: ${error.message}`;
       }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

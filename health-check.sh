@@ -118,8 +118,8 @@ echo "------------------------"
 
 frontend_ok=true
 check_url "$FRONTEND_URL" "Frontend homepage" 200 || frontend_ok=false
-check_url "$FRONTEND_URL/chat" "Chat page" 200 || frontend_ok=false
-check_url "$FRONTEND_URL/translator" "Translator page" 200 || frontend_ok=false
+check_url "$FRONTEND_URL/home/chat" "Chat page" 200 || frontend_ok=false
+check_url "$FRONTEND_URL/home/translate" "Translator page" 200 || frontend_ok=false
 
 echo ""
 

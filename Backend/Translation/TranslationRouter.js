@@ -76,12 +76,19 @@ router.post('/translate', async (req, res) => {
         const response = await result.response;
         const responseText = response.text();
 
+        // Validate response text
+        if (!responseText || responseText.trim() === '') {
+            throw new Error('Empty response from Google Gemini API');
+        }
+
         // Better JSON parsing with fallback
         let parsedResponse;
         try {
             const validJsonString = responseText.replace(/(\w+):/g, '"$1":');
             parsedResponse = JSON.parse(validJsonString);
         } catch (parseError) {
+            console.warn('JSON parsing failed, trying manual extraction:', parseError);
+            
             // If JSON parsing fails, try to extract bangla text manually
             const banglaMatch = responseText.match(/bangla[:\s]*["']([^"']+)["']/i);
             if (banglaMatch) {
@@ -90,18 +97,41 @@ router.post('/translate', async (req, res) => {
                     bangla: banglaMatch[1]
                 };
             } else {
-                // If still no match, return the raw response
-                parsedResponse = {
-                    banglish: text,
-                    bangla: responseText.trim()
-                };
+                // Try alternative patterns
+                const altMatch = responseText.match(/response[:\s]*["']([^"']+)["']/i) || 
+                                responseText.match(/translation[:\s]*["']([^"']+)["']/i);
+                
+                if (altMatch) {
+                    parsedResponse = {
+                        banglish: text,
+                        bangla: altMatch[1]
+                    };
+                } else {
+                    // If still no match, clean and return the raw response
+                    const cleanedResponse = responseText
+                        .replace(/[\{\}]/g, '')
+                        .replace(/banglish[:\s]*["'][^"']*["']/gi, '')
+                        .replace(/bangla[:\s]*["']?/gi, '')
+                        .replace(/["']/g, '')
+                        .trim();
+                    
+                    parsedResponse = {
+                        banglish: text,
+                        bangla: cleanedResponse || responseText.trim()
+                    };
+                }
             }
+        }
+
+        // Validate final result
+        if (!parsedResponse.bangla || parsedResponse.bangla.trim() === '') {
+            throw new Error('No valid translation generated');
         }
 
         res.json({
             success: true,
             banglish: parsedResponse.banglish || text,
-            bangla: parsedResponse.bangla || responseText.trim()
+            bangla: parsedResponse.bangla.trim()
         });
 
     } catch (error) {

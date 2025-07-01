@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Translation API Test</title>
+</head>
+<body>
+    <h1>Translation API Test</h1>
+    <input type="text" id="textInput" placeholder="Enter Banglish text" value="ami valo achi">
+    <button onclick="testTranslation()">Test Translation</button>
+    <div id="result"></div>
+    <div id="debug"></div>
+
+    <script>
+        async function testTranslation() {
+            const text = document.getElementById('textInput').value;
+            const resultDiv = document.getElementById('result');
+            const debugDiv = document.getElementById('debug');
+            
+            resultDiv.innerHTML = 'Testing...';
+            debugDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('https://banglaverse-backend-api.vercel.app/api/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text }),
+                });
+                
+                debugDiv.innerHTML += `<p>Status: ${response.status}</p>`;
+                debugDiv.innerHTML += `<p>Headers: ${JSON.stringify([...response.headers])}</p>`;
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<p>Success: ${data.success}</p><p>Bangla: ${data.bangla}</p>`;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                debugDiv.innerHTML += `<p>Error Details: ${error.stack}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

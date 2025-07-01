@@ -2,7 +2,7 @@ import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Components/Authentication/AuthProvider";
 import { Sparkles } from 'lucide-react';
-import { FaAirbnb } from 'react-icons/fa6';
+import BanglaVerseLogo from '../Components/Logo/BanglaVerseLogo';
 
 const SignUp = () => {
   const { createUser } = useContext(AuthContext);
@@ -67,10 +67,12 @@ const SignUp = () => {
             {/* Left Column - Logo Section */}
             <div className="bg-gradient-to-r from-red-primary to-green-primary w-1/3 p-12 flex flex-col justify-center items-center relative overflow-hidden">
               <div className="flex flex-col items-center relative z-10">
-                <h1 className="text-4xl text-center pb-8 font-bold text-white animate-float">
-                  BanglaBridge
-                </h1>
-                <FaAirbnb className="text-6xl text-center text-white animate-float-delayed" />
+                <BanglaVerseLogo 
+                  size={120} 
+                  showText={true} 
+                  animate={true}
+                  className="animate-float"
+                />
               </div>
               <div className="absolute inset-0">
                 <div className="absolute inset-0 grid-animation opacity-20"></div>
