@@ -1,0 +1,16 @@
+Backend
+node_modules
+.git
+.env*
+.DS_Store
+*.log
+.vscode
+.idea
+coverage
+.nyc_output
+docs
+tests
+*.md
+docker-compose.yml
+Dockerfile
+.dockerignore

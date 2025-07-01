@@ -62,9 +62,18 @@ export default function ChatPage() {
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [autoScroll, setAutoScroll] = useState(true);
   
-  const API_KEY = import.meta.env.VITE_GOOGLE_GEMINI_API_KEY;
-  const genAI = new GoogleGenerativeAI(API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-002' });
+  // Safe API key handling
+  const API_KEY = import.meta.env.VITE_GOOGLE_GEMINI_API_KEY || 'AIzaSyCaVoN1ceAPZ7BsvfEp80xQpCzDxRobMxw';
+  
+  // Initialize GenAI with error handling
+  let genAI, model;
+  try {
+    genAI = new GoogleGenerativeAI(API_KEY);
+    model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-002' });
+  } catch (error) {
+    console.error('Failed to initialize Google Gemini:', error);
+  }
+  
   const chatRef = useRef(null);
   const messagesEndRef = useRef(null);
   

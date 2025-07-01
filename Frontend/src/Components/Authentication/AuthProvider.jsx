@@ -7,6 +7,8 @@ import {
   signOut,
   updateProfile,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import app from "../../Firebase/firebase.config";
 
@@ -17,13 +19,20 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Safe API URL handling
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://banglaverse-backend.vercel.app' || 'http://localhost:3000';
+
   const fetchUserData = async (email) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/search?email=${email}`);
+      const res = await fetch(`${API_BASE_URL}/api/users/search?email=${email}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       const data = await res.json();
       return data.length > 0 ? data[0] : null;
     } catch (error) {
-      alert("Error fetching user data. Please try again.");
+      console.warn("Error fetching user data:", error.message);
+      // Return null instead of showing alert, so app can continue
       return null;
     }
   };
