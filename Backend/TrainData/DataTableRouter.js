@@ -26,6 +26,7 @@ const dataTableController = require('./DataTableController');
  *         banglish: "Amar nam"
  *         english: "My name is"
  *         bangla: "আমার নাম"
+ */
 
 /**
  * @swagger

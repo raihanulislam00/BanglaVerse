@@ -61,6 +61,7 @@ const documentController = require('./DocumentController');
  *         isPublic: true
  *         pdfUrl: "https://example.com/sample.pdf"
  *         tags: ["tag1", "tag2"]
+ */
 
 /**
  * @swagger
